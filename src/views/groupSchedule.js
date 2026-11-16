@@ -281,7 +281,7 @@ function problemsFooter(model) {
 }
 
 export function renderInto(container, model, ctx) {
-  const body = ctx.wide ? `<div class="gs-wide">${groupScheduleSVG(model, ctx.today)}</div>` : `<div class="gs-list">${groupScheduleList(model, ctx.today)}</div>`;
+  const body = ctx.wide ? `<div class="gs-wide chart-wide">${groupScheduleSVG(model, ctx.today)}</div>` : `<div class="gs-list">${groupScheduleList(model, ctx.today)}</div>`;
   container.innerHTML = `<div class="gs">${body}${problemsFooter(model)}</div>`;
 }
 

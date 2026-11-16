@@ -132,8 +132,12 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
 .cal-body.is-weeks { overflow-x: auto; }
 .cal-body.is-weeks svg { min-width: 960px; }
 
-.gs-wide { overflow-x: auto; }
-.gs-wide svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+.chart-wide { overflow-x: auto; }
+.chart-wide svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+@media (min-width: 760px) {
+  .chart-wide { position: relative; left: 50%; width: min(calc(100vw - 2 * var(--gutter)), 1920px); transform: translateX(-50%); overflow-x: visible; }
+  .chart-wide svg { min-width: 0; }
+}
 .gs-group { margin: 0 0 20px; padding-left: 12px; border-left: 5px solid var(--group); }
 .gs-group h2 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
 .gs-group ol { list-style: none; margin: 0; padding: 0; }
