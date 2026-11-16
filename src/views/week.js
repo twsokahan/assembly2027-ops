@@ -1,8 +1,8 @@
-import { addDays, fmt } from "../dates.js?v=2";
-import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=2";
-import { inlineIcon } from "../svg.js?v=2";
-import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=2";
-import { renderWeekCardBlob } from "../card.js?v=2";
+import { addDays, fmt } from "../dates.js?v=3";
+import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=3";
+import { inlineIcon } from "../svg.js?v=3";
+import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=3";
+import { renderWeekCardBlob } from "../card.js?v=3";
 
 const FILTERS = [["全部", null], ["本部", "運營本部"], ["前導", "前導組"], ["活動", "活動組"], ["總務", "總務組"]];
 
@@ -109,7 +109,7 @@ export function render(container, model, ctx) {
 
   container.innerHTML = `<div class="week${ctx.wide ? " is-wide" : ""}">
 <div class="hero"><div class="count">${heroCount(view.daysLeft)}</div>
-<div class="range">${phaseTag(view.phase)}<div class="k">下次開會前要完成</div><div class="r">${fmt(addDays(ctx.today, 1))} ～ ${fmt(view.windowEnd)}</div></div></div>
+<div class="range">${phaseTag(view.phase)}<div class="k">下次開會前要完成</div><div class="r"><span class="nowrap">${fmt(addDays(ctx.today, 1))}</span> ～ <span class="nowrap">${fmt(view.windowEnd)}</span></div></div></div>
 <div class="boxes">${infoBox("下次開會", meeting.value, meeting.sub)}${infoBox("各組小組會", small.value, small.sub)}</div>
 ${filterBar(selected)}
 <div class="groups">${view.groups.filter((g) => !selected || g.group === selected).map(groupSection).join("")}</div>

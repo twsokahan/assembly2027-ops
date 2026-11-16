@@ -1,6 +1,6 @@
-import { fmt, addDays } from "./dates.js?v=2";
-import { ACCENT, DARK, GROUPS, GROUP_COLORS, INK, INK_2, MUTED, PAPER, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "./theme.js?v=2";
-import { allocate, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "./week.js?v=2";
+import { fmt, addDays } from "./dates.js?v=3";
+import { ACCENT, DARK, GROUPS, GROUP_COLORS, INK, INK_2, MUTED, PAPER, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "./theme.js?v=3";
+import { allocate, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "./week.js?v=3";
 
 const WIDTH = 1080;
 const HEIGHT = 1350;
