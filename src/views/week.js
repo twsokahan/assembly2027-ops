@@ -1,7 +1,8 @@
 import { addDays, fmt } from "../dates.js?v=1";
 import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=1";
 import { inlineIcon } from "../svg.js?v=1";
-import { weekView, shortItem, shortOwner, nextMeetingBox } from "../week.js?v=1";
+import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=1";
+import { downloadWeekCard } from "../card.js?v=1";
 
 const FILTERS = [["全部", null], ["本部", "運營本部"], ["前導", "前導組"], ["活動", "活動組"], ["總務", "總務組"]];
 
@@ -9,9 +10,8 @@ const escapeHtml = (value) =>
   String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 function heroCount(daysLeft) {
-  if (daysLeft > 0) return `<div class="k">距總會</div><div class="n">${daysLeft}<span>天</span></div>`;
-  if (daysLeft === 0) return '<div class="k">今天</div><div class="n">總會</div>';
-  return '<div class="k">總會後</div><div class="n">收尾</div>';
+  const { label, number, unit } = heroParts(daysLeft);
+  return `<div class="k">${label}</div><div class="n">${number}${unit ? `<span>${unit}</span>` : ""}</div>`;
 }
 
 function phaseTag(phase) {
@@ -53,17 +53,21 @@ export function render(container, model, ctx) {
   const view = weekView(model, ctx.today);
   const selected = GROUPS.includes(ctx.group) ? ctx.group : null;
   const meeting = nextMeetingBox(view.nextMeeting, fmt);
-  const small = view.nextSmallGroup;
-  const smallNote = small?.note ? `各組自訂｜${small.note}` : "各組自訂";
+  const small = smallGroupBox(view.nextSmallGroup, fmt);
 
   container.innerHTML = `<div class="week${ctx.wide ? " is-wide" : ""}">
 <div class="hero"><div class="count">${heroCount(view.daysLeft)}</div>
 <div class="range">${phaseTag(view.phase)}<div class="k">下次開會前要完成</div><div class="r">${fmt(addDays(ctx.today, 1))} ～ ${fmt(view.windowEnd)}</div></div></div>
-<div class="boxes">${infoBox("下次開會", meeting.value, meeting.sub)}${small ? infoBox("各組小組會", `${fmt(small.date)} 晚上`, smallNote) : infoBox("各組小組會", "—", "")}</div>
+<div class="boxes">${infoBox("下次開會", meeting.value, meeting.sub)}${infoBox("各組小組會", small.value, small.sub)}</div>
 ${filterBar(selected)}
-<div class="groups">${view.groups.filter((g) => !selected || g.group === selected).map(groupSection).join("")}</div></div>`;
+<div class="groups">${view.groups.filter((g) => !selected || g.group === selected).map(groupSection).join("")}</div>
+<button type="button" class="card-download">下載圖卡</button></div>`;
 
   container.onclick = (event) => {
+    if (event.target.closest?.(".card-download")) {
+      downloadWeekCard(view, ctx.fetchedAt);
+      return;
+    }
     const chip = event.target.closest?.("[data-group]");
     if (chip) ctx.setGroup(chip.dataset.group || null);
   };

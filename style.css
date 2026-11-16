@@ -107,3 +107,4 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
   .tx { font-size: 16px; }
   .ow { font-size: 13px; }
 }
+.card-download { display: block; margin: 24px auto 8px; font: inherit; font-size: 15px; font-weight: 700; color: var(--dark); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 10px 26px; cursor: pointer; }

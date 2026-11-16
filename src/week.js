@@ -67,3 +67,14 @@ export function nextMeetingBox(meeting, fmt) {
   const where = pending.length ? pending.join("、") : meeting.place;
   return { value: timeKnown ? `${fmt(meeting.date)} ${meeting.time}` : fmt(meeting.date), sub: `${meeting.name}｜${where}` };
 }
+
+export function smallGroupBox(small, fmt) {
+  if (!small) return { value: "—", sub: "" };
+  return { value: `${fmt(small.date)} 晚上`, sub: small.note ? `各組自訂｜${small.note}` : "各組自訂" };
+}
+
+export function heroParts(daysLeft) {
+  if (daysLeft > 0) return { label: "距總會", number: String(daysLeft), unit: "天" };
+  if (daysLeft === 0) return { label: "今天", number: "總會", unit: "" };
+  return { label: "總會後", number: "收尾", unit: "" };
+}
