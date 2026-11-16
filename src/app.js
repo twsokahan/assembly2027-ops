@@ -1,9 +1,9 @@
-import { CONFIG } from "../config.js?v=1";
-import { login, refresh, storage } from "./api.js?v=1";
-import { buildModel } from "./model.js?v=1";
-import { statusLine as describeStatus } from "./status.js?v=1";
-import { todayInTaipei } from "./dates.js?v=1";
-import { render as renderWeek } from "./views/week.js?v=1";
+import { CONFIG } from "../config.js?v=2";
+import { login, refresh, storage } from "./api.js?v=2";
+import { buildModel } from "./model.js?v=2";
+import { statusLine as describeStatus } from "./status.js?v=2";
+import { todayInTaipei } from "./dates.js?v=2";
+import { render as renderWeek } from "./views/week.js?v=2";
 
 const GSI_SRC = "https://accounts.google.com/gsi/client";
 const LINE_HINT = "請點右下角『⋯』用預設瀏覽器開啟";
@@ -157,7 +157,7 @@ async function showLogin(message) {
 }
 
 async function startMock() {
-  const response = await fetch("test/fixtures/data.json?v=1");
+  const response = await fetch("test/fixtures/data.json?v=2");
   const { fetchedAt, tables } = await response.json();
   showData({ fetchedAt, tables }, "fresh");
 }

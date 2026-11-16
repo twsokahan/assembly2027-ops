@@ -1,4 +1,4 @@
-import { CONFIG } from "../config.js?v=1";
+import { CONFIG } from "../config.js?v=2";
 
 const FETCH_TIMEOUT_MS = 15000;
 const KEY = { token: "ops.token", data: "ops.data" };

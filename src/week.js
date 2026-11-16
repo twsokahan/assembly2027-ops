@@ -1,7 +1,7 @@
-import { addDays, daysBetween } from "./dates.js?v=1";
-import { isOpen, isCancelled } from "./model.js?v=1";
-import { GROUPS, CIRCLED } from "./theme.js?v=1";
-import { CONFIG } from "../config.js?v=1";
+import { addDays, daysBetween } from "./dates.js?v=2";
+import { isOpen, isCancelled } from "./model.js?v=2";
+import { GROUPS, CIRCLED } from "./theme.js?v=2";
+import { CONFIG } from "../config.js?v=2";
 
 const NOT_STARTED = "未開始";
 const TBD = ["", "待定"];

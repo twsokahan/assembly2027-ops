@@ -1,8 +1,8 @@
-import { addDays, fmt } from "../dates.js?v=1";
-import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=1";
-import { inlineIcon } from "../svg.js?v=1";
-import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=1";
-import { renderWeekCardBlob } from "../card.js?v=1";
+import { addDays, fmt } from "../dates.js?v=2";
+import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=2";
+import { inlineIcon } from "../svg.js?v=2";
+import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=2";
+import { renderWeekCardBlob } from "../card.js?v=2";
 
 const FILTERS = [["全部", null], ["本部", "運營本部"], ["前導", "前導組"], ["活動", "活動組"], ["總務", "總務組"]];
 

@@ -1,4 +1,4 @@
-import { ACCENT } from "./theme.js?v=1";
+import { ACCENT } from "./theme.js?v=2";
 
 const SHAPES = {
   late: (x, y, s, color) =>
