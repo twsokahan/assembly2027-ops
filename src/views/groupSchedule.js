@@ -1,8 +1,8 @@
-import { daysBetween, fmt, fmtShort } from "../dates.js?v=3";
-import { CONFIG } from "../../config.js?v=3";
-import { isCancelled, isDone } from "../model.js?v=3";
-import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, CIRCLED, mix } from "../theme.js?v=3";
-import { FONT_STACK, arrowDefs, diamond, icon, inlineIcon, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=3";
+import { daysBetween, fmt, fmtShort } from "../dates.js?v=4";
+import { CONFIG } from "../../config.js?v=4";
+import { isCancelled, isDone } from "../model.js?v=4";
+import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, CIRCLED, mix } from "../theme.js?v=4";
+import { FONT_STACK, arrowDefs, diamond, icon, inlineIcon, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=4";
 
 const { CAL_START, CAL_END, EVENT_DATE } = CONFIG;
 const WHITE = "#ffffff";
