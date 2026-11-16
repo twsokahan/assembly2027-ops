@@ -93,14 +93,30 @@ function readToken(token) {
   return user.exp > Date.now() ? user : null;
 }
 
+function cacheGet(key) {
+  try {
+    return CacheService.getScriptCache().get(key);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+function cachePut(key, value, seconds) {
+  try {
+    CacheService.getScriptCache().put(key, value, seconds);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function sharingEmails(item) {
   const owner = item.getOwner();
   return [owner, ...item.getEditors(), ...item.getViewers()].filter(Boolean).map((user) => normalizeEmail(user.getEmail()));
 }
 
 function allowedEmails() {
-  const cache = CacheService.getScriptCache();
-  const cached = cache.get("allowedEmails");
+  const cached = cacheGet("allowedEmails");
   if (cached) return JSON.parse(cached);
   const emails = new Set();
   const queue = [DriveApp.getFileById(SpreadsheetApp.getActive().getId())];
@@ -111,7 +127,7 @@ function allowedEmails() {
   }
   emails.delete("");
   const list = [...emails];
-  cache.put("allowedEmails", JSON.stringify(list), ALLOWED_CACHE_SECONDS);
+  cachePut("allowedEmails", JSON.stringify(list), ALLOWED_CACHE_SECONDS);
   return list;
 }
 
@@ -134,12 +150,11 @@ function data({ token }) {
   const user = readToken(token);
   if (!user) return { ok: false, error: "expired" };
   if (!allowedEmails().includes(normalizeEmail(user.email))) return { ok: false, error: "not_allowed", email: user.email };
-  const cache = CacheService.getScriptCache();
-  const cached = cache.get("data");
+  const cached = cacheGet("data");
   if (cached) return JSON.parse(cached);
   const tables = Object.fromEntries(Object.entries(TABLES).map(([key, { sheet, columns }]) => [key, readTable(sheet, columns)]));
   const result = { ok: true, fetchedAt: Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd'T'HH:mm:ssXXX"), tables };
   const serialized = JSON.stringify(result);
-  if (serialized.length <= DATA_CACHE_MAX_BYTES) cache.put("data", serialized, DATA_CACHE_SECONDS);
+  if (Utilities.newBlob(serialized).getBytes().length <= DATA_CACHE_MAX_BYTES) cachePut("data", serialized, DATA_CACHE_SECONDS);
   return result;
 }

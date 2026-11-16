@@ -28,14 +28,14 @@ function sheetOf(values) {
   return { getDataRange: () => ({ getDisplayValues: () => values }) };
 }
 
-function createGs({ file = sharable({ owner: "owner@x.com", editors: ["Editor@X.com"] }), sheets = {}, tokenInfo, calls = {} } = {}) {
+function createGs({ putThrows = false, file = sharable({ owner: "owner@x.com", editors: ["Editor@X.com"] }), sheets = {}, tokenInfo, calls = {} } = {}) {
   const cache = new Map();
   const gs = vm.createContext({
     console: { error() {} },
     CacheService: {
       getScriptCache: () => ({
         get: (key) => (cache.has(key) ? cache.get(key) : null),
-        put: (key, value) => { calls.cachePuts = (calls.cachePuts || 0) + 1; cache.set(key, value); },
+        put: (key, value) => { if (putThrows) throw new Error("cache down"); calls.cachePuts = (calls.cachePuts || 0) + 1; (calls.keys ||= []).push(key); cache.set(key, value); },
       }),
     },
     PropertiesService: {
@@ -49,7 +49,7 @@ function createGs({ file = sharable({ owner: "owner@x.com", editors: ["Editor@X.
       base64EncodeWebSafe: (input) => Buffer.from(input).toString("base64url"),
       base64DecodeWebSafe: (text) => [...Buffer.from(text, "base64url")],
       computeHmacSha256Signature: (payload, secret) => [...createHmac("sha256", secret).update(payload).digest()],
-      newBlob: (bytes) => ({ getDataAsString: () => Buffer.from(bytes).toString("utf8") }),
+      newBlob: (input) => ({ getDataAsString: () => Buffer.from(input).toString("utf8"), getBytes: () => [...Buffer.from(input)] }),
       getUuid: () => "uuid",
       formatDate: () => "2026-11-21T10:05:00+08:00",
     },
@@ -178,4 +178,22 @@ test("doPost answers bad_request for malformed bodies and unknown actions", () =
   const call = (contents) => JSON.parse(gs.doPost({ postData: { contents } }).getContent());
   assert.deepEqual(call("not json"), { ok: false, error: "bad_request" });
   assert.deepEqual(call(JSON.stringify({ action: "nope" })), { ok: false, error: "bad_request" });
+});
+
+test("data skips the cache when UTF-8 bytes exceed 90 KB even if characters do not", () => {
+  const calls = {};
+  const wide = "字".repeat(40000);
+  const gs = createGs({ calls, sheets: { 運營會時程: [["日期", "會議"], ["d", wide]] } });
+  const token = gs.issueToken({ email: "editor@x.com", name: "E" });
+  const result = gs.data({ token });
+  assert.equal(result.ok, true);
+  assert.ok(JSON.stringify(result).length < 90000);
+  assert.ok(Buffer.byteLength(JSON.stringify(result)) > 90 * 1024);
+  assert.ok(!(calls.keys || []).includes("data"));
+});
+
+test("data still succeeds when the cache throws", () => {
+  const gs = createGs({ putThrows: true });
+  const token = gs.issueToken({ email: "editor@x.com", name: "E" });
+  assert.equal(gs.data({ token }).ok, true);
 });
