@@ -131,3 +131,20 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
 .cal-body svg { display: block; width: 100%; height: auto; }
 .cal-body.is-weeks { overflow-x: auto; }
 .cal-body.is-weeks svg { min-width: 960px; }
+
+.gs-wide { overflow-x: auto; }
+.gs-wide svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+.gs-group { margin: 0 0 20px; padding-left: 12px; border-left: 5px solid var(--group); }
+.gs-group h2 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
+.gs-group ol { list-style: none; margin: 0; padding: 0; }
+.gs-item { display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: 8px; padding: 6px 0; border-bottom: 1px dashed var(--rule); font-size: 15px; }
+.gs-when { font-size: 13px; font-weight: 600; color: var(--muted); padding-top: 2px; }
+.gs-name { font-weight: 600; }
+.gs-needs { grid-column: 2; font-size: 13px; color: var(--muted); }
+.gs-item.done .gs-name { color: var(--muted); }
+.gs-item.cancelled .gs-name { text-decoration: line-through; color: var(--muted); }
+.gs-item.past:not(.done):not(.cancelled) .gs-when { color: var(--accent); }
+.gs-item .ico { vertical-align: -2px; margin-right: 4px; }
+.gs-problems { margin-top: 24px; font-size: 12px; color: var(--muted); }
+.gs-problems h3 { margin: 0 0 4px; font-size: 12px; }
+.gs-problems ul { margin: 0; padding-left: 1.2em; }
