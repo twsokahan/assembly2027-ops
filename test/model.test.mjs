@@ -21,6 +21,22 @@ test("fixture 建出完整 model", () => {
   assert.deepEqual(m.problems, []);
 });
 
+test("fixture 的標記與持續工作從工作大表取日期", () => {
+  const m = buildModel(fixture.tables);
+  const markDate = Object.fromEntries(m.marks.map((x) => [x.label, x.date]));
+  assert.equal(markDate["報名開放"], "2026-12-14");
+  assert.equal(markDate["交流名單截止"], "2027-01-17");
+  assert.equal(markDate["報名截止"], "2027-01-26");
+  assert.equal(markDate["高鐵開賣"], "2027-01-29");
+  assert.equal(markDate["異動截止"], "2027-02-22");
+  const spanStart = Object.fromEntries(m.spans.map((x) => [x.name, x.start]));
+  assert.equal(spanStart["工作人員招募"], "2026-12-12");
+  assert.equal(spanStart["報名"], "2026-12-14");
+  assert.equal(spanStart["布展"], "2027-02-25");
+  assert.equal(spanStart["紀念品 下單→到貨"], "2026-11-30");
+  assert.equal(spanStart["遊覽車預訂"], "2026-12-14");
+});
+
 test("milestone 帶組別、列、日期", () => {
   const m = buildModel(fixture.tables);
   const ms = m.milestones.find((x) => x.name === "報名截止");
@@ -72,6 +88,42 @@ test("span 端點可以是圖上名稱", () => {
   const s = buildModel(t).spans.find((x) => x.name === "新的");
   assert.equal(s.end, "2027-01-26");
   assert.equal(s.row, 0);
+});
+
+test("span 端點可以寫「序 N」引用工作大表", () => {
+  const t = clone();
+  t.spans.push({ 名稱: "新的", 組別: "前導組", 列名: "報名", 開始: "序 40", 結束: "序40" });
+  const s = buildModel(t).spans.find((x) => x.name === "新的");
+  assert.equal(s.start, "2026-12-14");
+  assert.equal(s.end, "2026-12-14");
+});
+
+test("日曆的開始可以寫圖上名稱或「序 N」", () => {
+  const t = clone();
+  t.calendar.push(
+    { 類型: "標記", 開始: "報名截止", 結束: "", 名稱: "名稱引用", 說明: "報名" },
+    { 類型: "標記", 開始: "序 40", 結束: "", 名稱: "序號引用", 說明: "報名" },
+  );
+  const m = buildModel(t);
+  assert.equal(m.marks.find((x) => x.label === "名稱引用").date, "2027-01-26");
+  assert.equal(m.marks.find((x) => x.label === "序號引用").date, "2026-12-14");
+  assert.deepEqual(m.problems, []);
+});
+
+test("空白的結束不會對到沒有名稱的截止點補充", () => {
+  const t = clone();
+  t.extraMilestones.push({ 圖上名稱: "", 組別: "前導組", 列名: "報名", 日期: "2027/1/10", 狀態: "" });
+  t.calendar.push({ 類型: "連假", 開始: "2027/2/1", 結束: "", 名稱: "一天連假", 說明: "" });
+  const h = buildModel(t).holidays.find((x) => x.name === "一天連假");
+  assert.equal(h.end, "2027-02-01");
+});
+
+test("日曆的開始找不到對應時略過並回報", () => {
+  const t = clone();
+  t.calendar.push({ 類型: "標記", 開始: "序 999", 結束: "", 名稱: "壞的", 說明: "" });
+  const m = buildModel(t);
+  assert.ok(!m.marks.some((x) => x.label === "壞的"));
+  assert.ok(m.problems.some((p) => p.includes("序 999")));
 });
 
 test("截止點補充用列名找列並補成 milestone", () => {

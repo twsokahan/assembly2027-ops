@@ -61,18 +61,31 @@ function readTasks(rawTasks, problems) {
   return tasks;
 }
 
-function readCalendar(rawCalendar, problems) {
+const TASK_REF = /^序\s*(\d+)$/;
+
+function dayResolver(tasks, milestones) {
+  const byChartName = new Map(milestones.map((m) => [m.name, m.date]));
+  const byTaskId = new Map(tasks.map((t) => [t.id, t.date]));
+  return (value) => {
+    const s = text(value);
+    if (!s) return null;
+    const ref = s.match(TASK_REF);
+    return parseDay(s) ?? byChartName.get(s) ?? (ref ? byTaskId.get(Number(ref[1])) : undefined) ?? null;
+  };
+}
+
+function readCalendar(rawCalendar, resolveDay, problems) {
   const out = { phases: [], weeks: [], holidays: [], goodwill: null, dayNames: {}, marks: [], bigNotes: {} };
   for (const r of rawCalendar) {
     const type = text(r["類型"]);
-    const start = parseDay(r["開始"]);
+    const start = resolveDay(r["開始"]);
     const name = text(r["名稱"]);
     const note = text(r["說明"]);
     if (!start) {
-      problems.push(`網頁｜日曆 「${name}」的開始日期「${text(r["開始"])}」看不懂`);
+      problems.push(`網頁｜日曆 「${name}」的開始「${text(r["開始"])}」看不懂，也不是圖上名稱或序號`);
       continue;
     }
-    const end = parseDay(r["結束"]) ?? start;
+    const end = resolveDay(r["結束"]) ?? start;
     if (type === "階段") out.phases.push({ start, end, name, note });
     else if (type === "週") out.weeks.push({ start, end, name, note });
     else if (type === "連假") out.holidays.push({ start, end, name });
@@ -115,17 +128,15 @@ function readMilestones(tasks, rawExtra, lanes, problems) {
   return milestones;
 }
 
-function readSpans(rawSpans, milestones, lanes, problems) {
-  const milestoneDate = new Map(milestones.map((m) => [m.name, m.date]));
-  const resolve = (value) => parseDay(value) ?? milestoneDate.get(text(value)) ?? null;
+function readSpans(rawSpans, resolveDay, lanes, problems) {
   const spans = [];
   for (const r of rawSpans) {
     const name = text(r["名稱"]);
-    const start = resolve(r["開始"]);
-    const end = resolve(r["結束"]);
+    const start = resolveDay(r["開始"]);
+    const end = resolveDay(r["結束"]);
     if (!start || !end) {
       const bad = !start ? text(r["開始"]) : text(r["結束"]);
-      problems.push(`網頁｜持續工作 「${name}」的${!start ? "開始" : "結束"}「${bad}」看不懂，也不是圖上名稱`);
+      problems.push(`網頁｜持續工作 「${name}」的${!start ? "開始" : "結束"}「${bad}」看不懂，也不是圖上名稱或序號`);
       continue;
     }
     const group = text(r["組別"]);
@@ -154,10 +165,11 @@ export function buildModel(tables = {}) {
   const problems = [];
   const tasks = readTasks(list(tables.tasks), problems);
   const meetingRows = list(tables.meetings);
-  const calendar = readCalendar(list(tables.calendar), problems);
   const lanes = buildLanes(tables.rows);
   const milestones = readMilestones(tasks, list(tables.extraMilestones), lanes, problems);
-  const spans = readSpans(list(tables.spans), milestones, lanes, problems);
+  const resolveDay = dayResolver(tasks, milestones);
+  const calendar = readCalendar(list(tables.calendar), resolveDay, problems);
+  const spans = readSpans(list(tables.spans), resolveDay, lanes, problems);
   const deps = readDeps(list(tables.deps), milestones, spans, problems);
 
   const meetings = [];
