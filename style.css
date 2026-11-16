@@ -126,3 +126,8 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
 .prose h3 { margin: 24px 0 4px; font-size: 15px; font-weight: 800; }
 .prose p, .prose ul { margin: 0 0 12px; }
 .prose ul { padding-left: 1.4em; }
+
+.cal-switch { display: flex; gap: 8px; margin: 8px 0 12px; }
+.cal-body svg { display: block; width: 100%; height: auto; }
+.cal-body.is-weeks { overflow-x: auto; }
+.cal-body.is-weeks svg { min-width: 960px; }
