@@ -2,7 +2,7 @@ import { addDays, fmt } from "../dates.js?v=1";
 import { GROUPS, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, STATUS_STYLE } from "../theme.js?v=1";
 import { inlineIcon } from "../svg.js?v=1";
 import { weekView, shortItem, shortOwner, nextMeetingBox, smallGroupBox, heroParts } from "../week.js?v=1";
-import { downloadWeekCard } from "../card.js?v=1";
+import { renderWeekCardBlob } from "../card.js?v=1";
 
 const FILTERS = [["全部", null], ["本部", "運營本部"], ["前導", "前導組"], ["活動", "活動組"], ["總務", "總務組"]];
 
@@ -49,6 +49,58 @@ function infoBox(title, value, sub) {
   return `<div class="box"><div class="k">${title}</div><div class="v">${escapeHtml(value)}</div><div class="s">${escapeHtml(sub)}</div></div>`;
 }
 
+function showCardOverlay(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const dialog = document.createElement("dialog");
+  dialog.className = "card-overlay";
+  const image = new Image();
+  image.src = url;
+  image.alt = "本週運營圖卡";
+  const save = document.createElement("a");
+  save.href = url;
+  save.download = filename;
+  save.className = "chip";
+  save.textContent = "下載";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "chip";
+  close.textContent = "關閉";
+  const hint = document.createElement("p");
+  hint.textContent = "手機可以長按圖片儲存";
+  const actions = document.createElement("div");
+  actions.append(save, close);
+  dialog.append(image, hint, actions);
+  const dismiss = () => {
+    dialog.close();
+    dialog.remove();
+    URL.revokeObjectURL(url);
+  };
+  close.addEventListener("click", dismiss);
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    dismiss();
+  });
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
+async function makeCard(button, view, fetchedAt) {
+  if (button.disabled) return;
+  const error = button.parentElement.querySelector(".card-error");
+  const label = button.textContent;
+  button.disabled = true;
+  button.textContent = "產生中…";
+  error.hidden = true;
+  try {
+    showCardOverlay(await renderWeekCardBlob(view, fetchedAt), `本週運營_${view.today}.png`);
+  } catch {
+    error.hidden = false;
+  } finally {
+    button.disabled = false;
+    button.textContent = label;
+  }
+}
+
 export function render(container, model, ctx) {
   const view = weekView(model, ctx.today);
   const selected = GROUPS.includes(ctx.group) ? ctx.group : null;
@@ -61,11 +113,12 @@ export function render(container, model, ctx) {
 <div class="boxes">${infoBox("下次開會", meeting.value, meeting.sub)}${infoBox("各組小組會", small.value, small.sub)}</div>
 ${filterBar(selected)}
 <div class="groups">${view.groups.filter((g) => !selected || g.group === selected).map(groupSection).join("")}</div>
-<button type="button" class="card-download">下載圖卡</button></div>`;
+<div class="card-download"><button type="button" class="chip">下載圖卡</button><p class="card-error" role="alert" hidden>圖卡產生失敗，請再試一次</p></div></div>`;
 
   container.onclick = (event) => {
-    if (event.target.closest?.(".card-download")) {
-      downloadWeekCard(view, ctx.fetchedAt);
+    const download = event.target.closest?.(".card-download button");
+    if (download) {
+      makeCard(download, view, ctx.fetchedAt);
       return;
     }
     const chip = event.target.closest?.("[data-group]");

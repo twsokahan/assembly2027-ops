@@ -107,4 +107,12 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
   .tx { font-size: 16px; }
   .ow { font-size: 13px; }
 }
-.card-download { display: block; margin: 24px auto 8px; font: inherit; font-size: 15px; font-weight: 700; color: var(--dark); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 10px 26px; cursor: pointer; }
+.card-download { margin: 24px 0 8px; text-align: center; }
+.card-download button:disabled { opacity: 0.6; cursor: default; }
+.card-error { margin: 8px 0 0; font-size: 14px; font-weight: 700; color: var(--accent); }
+.card-overlay { width: min(92vw, 520px); max-height: 92vh; padding: 14px; border: 0; border-radius: 14px; background: var(--paper); color: var(--ink); text-align: center; overflow: auto; }
+.card-overlay::backdrop { background: rgba(31, 36, 48, 0.6); }
+.card-overlay img { display: block; width: 100%; height: auto; border-radius: 8px; }
+.card-overlay p { margin: 10px 0; font-size: 14px; color: var(--ink-2); }
+.card-overlay div { display: flex; justify-content: center; gap: 12px; }
+.card-overlay .chip { text-decoration: none; display: inline-block; }

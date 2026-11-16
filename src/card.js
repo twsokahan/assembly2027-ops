@@ -198,24 +198,10 @@ export async function drawWeekCard(canvas, view, sourceNote) {
   drawFooter(p, view, sourceNote);
 }
 
-function saveBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  if ("download" in HTMLAnchorElement.prototype) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.append(link);
-    link.click();
-    link.remove();
-  } else {
-    window.open(url, "_blank");
-  }
-  setTimeout(() => URL.revokeObjectURL(url), 60000);
-}
-
-export async function downloadWeekCard(view, fetchedAt) {
+export async function renderWeekCardBlob(view, fetchedAt) {
   const canvas = document.createElement("canvas");
   await drawWeekCard(canvas, view, updatedNote(fetchedAt));
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-  if (blob) saveBlob(blob, `本週運營_${view.today}.png`);
+  if (!blob) throw new Error("圖卡產生失敗");
+  return blob;
 }
