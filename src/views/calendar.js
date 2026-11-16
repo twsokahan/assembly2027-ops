@@ -1,4 +1,4 @@
-import { addDays, daysBetween, weekdayIndex } from "../dates.js?v=5";
+import { addDays, daysBetween, fmt, weekdayIndex } from "../dates.js?v=5";
 import { CONFIG } from "../../config.js?v=5";
 import { PAPER, INK, INK_2, MUTED, DARK, ACCENT, PHASE_COLORS, PHASE_TINTS, CIRCLED } from "../theme.js?v=5";
 import { FONT_STACK, icon, svgDoc, text, textWidth, setTextMeasurer } from "../svg.js?v=5";
@@ -15,6 +15,7 @@ const EMPTY = Object.freeze({ big: null, marks: [] });
 const dayOfMonth = (day) => Number(day.slice(8));
 const monthOf = (day) => Number(day.slice(5, 7));
 const yearOf = (day) => Number(day.slice(0, 4));
+const fullDay = (day) => `${yearOf(day)}/${fmt(day)}`;
 const firstOfMonth = (year, month) => `${year}-${String(month).padStart(2, "0")}-01`;
 const inRange = (day) => CAL_START <= day && day <= CAL_END;
 const within = (day, span) => span && span.start <= day && day <= span.end;
@@ -135,7 +136,7 @@ function legendSymbols(x, y, size = 17, gap = 26) {
 
 function header(w, mx, titleSize, split) {
   const weeks = Math.floor((daysBetween(CAL_START, CAL_END) + 1) / 7);
-  const span = `2026/11/15（日）～ 2027/3/13（六）｜${weeks} 週`;
+  const span = `${fullDay(CAL_START)}～ ${fullDay(CAL_END)}｜${weeks} 週`;
   const events = "沙推 1/23、2/13　彩排 2/20、2/27　總會 2/28";
   const out = [text(mx, 64, "2027 創價班總會　運營總覽", titleSize, { weight: 800 })];
   if (split) out.push(text(mx, 98, span, 19, { color: INK_2, weight: 500 }), text(mx, 124, events, 19, { color: INK_2, weight: 500 }));

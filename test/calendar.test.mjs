@@ -37,9 +37,10 @@ test("各組小組會備註含「停」也算小組會停", () => {
   assert.deepEqual(ev["2026-12-01"].marks, [["stop", "小組會停"]]);
 });
 
-test("連續週曆：17 週、一個今天、連假斜線", () => {
+test("連續週曆：16 週、一個今天、連假斜線", () => {
   const svg = calendarWeeksSVG(model(), "2026-11-21");
-  assert.equal(count(svg, 'class="week-row"'), 17);
+  assert.equal(count(svg, 'class="week-row"'), 16);
+  assert.ok(svg.includes("2026/11/15（日）～ 2027/3/6（六）｜16 週"));
   assert.equal(count(svg, 'class="today"'), 1);
   assert.ok(count(svg, 'fill="url(#hatch)"') >= 3);
 });
