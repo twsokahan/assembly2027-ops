@@ -1,4 +1,4 @@
-import { PAPER, INK, MUTED, ACCENT } from "./theme.js?v=4";
+import { PAPER, INK, MUTED, ACCENT } from "./theme.js?v=5";
 
 export const FONT_STACK = "'Noto Sans TC', 'PingFang TC', sans-serif";
 
