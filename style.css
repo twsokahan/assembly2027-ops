@@ -45,7 +45,6 @@ h1 { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: 0.02em; }
 .status { margin: 8px 0 0; min-height: 22px; font-size: 13px; color: var(--muted); }
 .status.is-offline { color: var(--accent); font-weight: 700; }
 main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
-.placeholder { padding: 56px 0; text-align: center; color: var(--muted); font-size: 15px; }
 .notice { max-width: 420px; margin: 40px auto 0; text-align: center; }
 .notice p { margin: 0 0 16px; }
 .notice .hint { font-size: 14px; color: var(--ink-2); }
@@ -152,3 +151,5 @@ main { padding: 8px var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
 .gs-problems { margin-top: 24px; font-size: 12px; color: var(--muted); }
 .gs-problems h3 { margin: 0 0 4px; font-size: 12px; }
 .gs-problems ul { margin: 0; padding-left: 1.2em; }
+
+.ts-narrow svg { display: block; width: 100%; height: auto; }

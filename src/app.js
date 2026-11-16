@@ -6,19 +6,16 @@ import { todayInTaipei } from "./dates.js?v=3";
 import { render as renderWeek } from "./views/week.js?v=3";
 import { render as renderCalendar } from "./views/calendar.js?v=3";
 import { render as renderSchedule } from "./views/groupSchedule.js?v=3";
+import { render as renderTwoSites } from "./views/twoSites.js?v=3";
 
 const GSI_SRC = "https://accounts.google.com/gsi/client";
 const LINE_HINT = "請點右下角『⋯』用預設瀏覽器開啟";
-
-const placeholder = (container) => {
-  container.innerHTML = '<p class="placeholder">下一批上線</p>';
-};
 
 const views = {
   week: renderWeek,
   calendar: renderCalendar,
   schedule: renderSchedule,
-  "two-sites": placeholder,
+  "two-sites": renderTwoSites,
 };
 
 const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
