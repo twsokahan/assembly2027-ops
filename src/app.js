@@ -1,6 +1,7 @@
 import { CONFIG } from "../config.js?v=1";
 import { login, refresh, storage } from "./api.js?v=1";
 import { buildModel } from "./model.js?v=1";
+import { statusLine as describeStatus } from "./status.js?v=1";
 import { todayInTaipei } from "./dates.js?v=1";
 
 const GSI_SRC = "https://accounts.google.com/gsi/client";
@@ -39,8 +40,6 @@ const currentRoute = () => {
   return name in views ? name : "week";
 };
 
-const clockOf = (fetchedAt) => fetchedAt.slice(11, 16);
-
 function setStatus(text, offline = false) {
   statusLine.textContent = text;
   statusLine.classList.toggle("is-offline", offline);
@@ -73,8 +72,8 @@ function render() {
 function showData(data, status) {
   current = { data, model: buildModel(data.tables) };
   showTabs(true);
-  if (status === "offline") setStatus(`連不上，顯示的是 ${clockOf(data.fetchedAt)} 的資料`, true);
-  else setStatus(`更新於 ${clockOf(data.fetchedAt)}`);
+  const { text, alert } = describeStatus(status, data.fetchedAt);
+  setStatus(text, alert);
   render();
 }
 
@@ -165,7 +164,7 @@ async function startMock() {
 async function start() {
   if (mockMode) return startMock();
   const cached = storage.get("ops.data");
-  if (cached && storage.get("ops.token")) showData(cached, "cached");
+  if (cached && storage.get("ops.token")) showData(cached, "refreshing");
   const result = await refresh(storage);
   if (result.status === "not_allowed") return showNotAllowed(result.email);
   if (result.status === "login") return showLogin();

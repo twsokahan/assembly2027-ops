@@ -112,3 +112,10 @@ test("storage: JSON 物件可以來回存取", () => {
     delete globalThis.localStorage;
   }
 });
+
+test("refresh: 連線卡住超過時限，有舊資料回 offline", async () => {
+  const store = memoryStorage({ "ops.token": "t", "ops.data": oldData });
+  const result = await refresh(store, () => new Promise(() => {}), 20);
+  assert.equal(result.status, "offline");
+  assert.deepEqual(result.data, oldData);
+});

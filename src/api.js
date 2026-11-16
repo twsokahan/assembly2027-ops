@@ -1,5 +1,6 @@
 import { CONFIG } from "../config.js?v=1";
 
+const FETCH_TIMEOUT_MS = 15000;
 const KEY = { token: "ops.token", data: "ops.data" };
 
 export class ApiError extends Error {
@@ -34,6 +35,7 @@ async function call(payload) {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!response.ok) throw new ApiError("server_error");
   const result = await response.json();
@@ -51,12 +53,20 @@ export async function fetchData(token) {
   return { fetchedAt, tables };
 }
 
-export async function refresh(store, fetchFn = fetchData) {
+function withTimeout(promise, ms) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new ApiError("timeout")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+export async function refresh(store, fetchFn = fetchData, timeoutMs = FETCH_TIMEOUT_MS) {
   const cached = store.get(KEY.data);
   const token = store.get(KEY.token);
   if (!token) return { status: "login", data: cached };
   try {
-    const data = await fetchFn(token);
+    const data = await withTimeout(fetchFn(token), timeoutMs);
     store.set(KEY.data, data);
     return { status: "fresh", data };
   } catch (error) {
