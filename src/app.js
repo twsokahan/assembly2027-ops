@@ -3,6 +3,7 @@ import { login, refresh, storage } from "./api.js?v=1";
 import { buildModel } from "./model.js?v=1";
 import { statusLine as describeStatus } from "./status.js?v=1";
 import { todayInTaipei } from "./dates.js?v=1";
+import { render as renderWeek } from "./views/week.js?v=1";
 
 const GSI_SRC = "https://accounts.google.com/gsi/client";
 const LINE_HINT = "請點右下角『⋯』用預設瀏覽器開啟";
@@ -12,7 +13,7 @@ const placeholder = (container) => {
 };
 
 const views = {
-  week: placeholder,
+  week: renderWeek,
   calendar: placeholder,
   schedule: placeholder,
   "two-sites": placeholder,
