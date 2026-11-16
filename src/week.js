@@ -53,7 +53,7 @@ export function weekView(model, today) {
       due: due.filter((t) => t.group === group).sort(dueOrder),
       late: late.filter((t) => t.group === group).sort(byDate),
     })),
-    nextSmallGroup: model.smallGroups.filter((s) => s.date > today).sort(byDate)[0] ?? null,
+    nextSmallGroup: model.smallGroups.filter((s) => s.date > today && !s.note.includes("停")).sort(byDate)[0] ?? null,
     phase: phaseLabel(model, addDays(today, 1)),
     daysLeft: daysBetween(today, CONFIG.EVENT_DATE),
   };

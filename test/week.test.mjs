@@ -80,3 +80,14 @@ test("render：試算表文字會被跳脫", () => {
   render(container, m, { today: "2026-11-19", wide: false, group: null, setGroup() {} });
   assert.ok(!container.innerHTML.includes("<img"));
 });
+
+test("備註寫「停」的小組會會被跳過", () => {
+  const m = model();
+  const next = weekView(m, "2026-11-21").nextSmallGroup;
+  const stopped = model((t) => {
+    const row = t.meetings.find((r) => r["會議"] === "各組小組會" && r["備註"] === next.note && String(r["日期"]).includes("11/24"));
+    row["備註"] = "停一次";
+  });
+  assert.equal(weekView(m, "2026-11-21").nextSmallGroup.date, "2026-11-24");
+  assert.equal(weekView(stopped, "2026-11-21").nextSmallGroup.date, "2026-12-01");
+});
