@@ -1,8 +1,8 @@
-import { daysBetween, fmt, fmtShort } from "../dates.js?v=7";
-import { CONFIG } from "../../config.js?v=7";
-import { isCancelled, isDone } from "../model.js?v=7";
-import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, CIRCLED, mix } from "../theme.js?v=7";
-import { FONT_STACK, arrowDefs, diamond, icon, inlineIcon, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=7";
+import { daysBetween, fmt, fmtShort } from "../dates.js?v=8";
+import { CONFIG } from "../../config.js?v=8";
+import { isCancelled, isDone } from "../model.js?v=8";
+import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, GROUP_COLORS, PHASE_COLORS, PHASE_TINTS, CIRCLED, mix } from "../theme.js?v=8";
+import { FONT_STACK, arrowDefs, diamond, icon, inlineIcon, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=8";
 
 const { CAL_START, CAL_END, EVENT_DATE } = CONFIG;
 const WHITE = "#ffffff";
@@ -15,7 +15,7 @@ const LANE_GAP = 14;
 const LANE_TOP = 300;
 const PILL_Y = [222, 254];
 const KEY_NAMES = [["沙推", "沙推", DARK], ["彩排", "彩排", DARK], ["正式舉辦", "總會", ACCENT]];
-const FOOTNOTE = "逐項工作、負責人、狀態看「運營追蹤大表」；逐週表在規劃文件附錄。沙推、彩排、總會的直線貫穿四組。";
+const FOOTNOTE = "逐項工作、負責人、狀態看「運營追蹤大表」的「工作大表」分頁。沙推、彩排、總會的直線貫穿四組。";
 
 const halo = (color = PAPER, width = 5) => ` paint-order="stroke" stroke="${color}" stroke-width="${width}" stroke-linejoin="round"`;
 const rangeLabel = (start, end) => (start === end ? fmtShort(start) : `${fmtShort(start)}–${fmtShort(end)}`);

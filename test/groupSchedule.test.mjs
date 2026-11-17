@@ -22,6 +22,12 @@ test("各組時程 SVG：截止點、持續工作、依賴、今天線", () => {
   assert.ok(!svg.includes("泳道"));
 });
 
+test("頁尾指向工作大表分頁，不再提規劃文件附錄", () => {
+  const svg = groupScheduleSVG(model(), "2026-11-21");
+  assert.ok(svg.includes("「工作大表」分頁"));
+  assert.ok(!svg.includes("規劃文件"));
+});
+
 test("完成的截止點淡化加勾，取消的加刪除線", () => {
   const m = model();
   const base = groupScheduleSVG(m, "2026-11-21");
