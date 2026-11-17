@@ -1,7 +1,7 @@
-import { addDays, fmtShort } from "../dates.js?v=7";
-import { CONFIG } from "../../config.js?v=7";
-import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, mix } from "../theme.js?v=7";
-import { FONT_STACK, arrowDefs, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=7";
+import { addDays, fmtShort } from "../dates.js?v=8";
+import { CONFIG } from "../../config.js?v=8";
+import { PAPER, INK, INK_2, MUTED, RULE, DARK, ACCENT, mix } from "../theme.js?v=8";
+import { FONT_STACK, arrowDefs, setTextMeasurer, svgDoc, text, textWidth } from "../svg.js?v=8";
 
 const WHITE = "#ffffff";
 const PLACES = ["桃園", "大溪"];

@@ -1,7 +1,7 @@
-import { addDays, daysBetween, fmt, weekdayIndex } from "../dates.js?v=7";
-import { CONFIG } from "../../config.js?v=7";
-import { PAPER, INK, INK_2, MUTED, DARK, ACCENT, PHASE_COLORS, PHASE_TINTS, CIRCLED } from "../theme.js?v=7";
-import { FONT_STACK, icon, svgDoc, text, textWidth, setTextMeasurer } from "../svg.js?v=7";
+import { addDays, daysBetween, fmt, weekdayIndex } from "../dates.js?v=8";
+import { CONFIG } from "../../config.js?v=8";
+import { PAPER, INK, INK_2, MUTED, DARK, ACCENT, PHASE_COLORS, PHASE_TINTS, CIRCLED } from "../theme.js?v=8";
+import { FONT_STACK, icon, svgDoc, text, textWidth, setTextMeasurer } from "../svg.js?v=8";
 
 const { CAL_START, CAL_END } = CONFIG;
 const WHITE = "#ffffff";

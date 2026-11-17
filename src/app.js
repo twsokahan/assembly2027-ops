@@ -1,12 +1,12 @@
-import { CONFIG } from "../config.js?v=7";
-import { login, refresh, storage } from "./api.js?v=7";
-import { buildModel } from "./model.js?v=7";
-import { statusLine as describeStatus } from "./status.js?v=7";
-import { todayInTaipei } from "./dates.js?v=7";
-import { render as renderWeek } from "./views/week.js?v=7";
-import { render as renderCalendar } from "./views/calendar.js?v=7";
-import { render as renderSchedule } from "./views/groupSchedule.js?v=7";
-import { render as renderTwoSites } from "./views/twoSites.js?v=7";
+import { CONFIG } from "../config.js?v=8";
+import { login, refresh, storage } from "./api.js?v=8";
+import { buildModel } from "./model.js?v=8";
+import { statusLine as describeStatus } from "./status.js?v=8";
+import { todayInTaipei } from "./dates.js?v=8";
+import { render as renderWeek } from "./views/week.js?v=8";
+import { render as renderCalendar } from "./views/calendar.js?v=8";
+import { render as renderSchedule } from "./views/groupSchedule.js?v=8";
+import { render as renderTwoSites } from "./views/twoSites.js?v=8";
 
 const GSI_SRC = "https://accounts.google.com/gsi/client";
 const LINE_HINT = "請點右下角『⋯』用預設瀏覽器開啟";
@@ -156,7 +156,7 @@ async function showLogin(message) {
 }
 
 async function startMock() {
-  const response = await fetch("test/fixtures/data.json?v=7");
+  const response = await fetch("test/fixtures/data.json?v=8");
   const { fetchedAt, tables } = await response.json();
   showData({ fetchedAt, tables }, "fresh");
 }
