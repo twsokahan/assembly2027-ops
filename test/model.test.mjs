@@ -151,6 +151,19 @@ test("兩地移動的時間可以寫「開始～結束」", () => {
   assert.deepEqual(m.problems, []);
 });
 
+test("兩地時間接受中文輸入法打的全形冒號、數字與波浪號", () => {
+  const t = clone();
+  t.trackMoves = [
+    { 日期: "2027/2/27", 時間: "１７：００～１７：３０", 從: "外地", 到: "大溪", 誰: "南部守護會抵達", 補充: "" },
+    { 日期: "2027/2/28", 時間: "9：30〜10：00", 從: "外地", 到: "桃園", 誰: "各圈報到", 補充: "" },
+  ];
+  t.trackEvents = [{ 日期: "2027/2/27", 開始: "19：00", 結束: "20：30", 地點: "大溪", 內容: "分組交流" }];
+  const m = buildModel(t);
+  assert.deepEqual(m.trackMoves.map((x) => [x.time, x.end]), [["17:00", "17:30"], ["09:30", "10:00"]]);
+  assert.deepEqual(m.trackEvents.map((e) => [e.start, e.end]), [["19:00", "20:30"]]);
+  assert.deepEqual(m.problems, []);
+});
+
 test("兩地移動的時間看不懂時略過並回報", () => {
   const t = clone();
   t.trackMoves = [{ 日期: "2027/2/27", 時間: "待定", 從: "外地", 到: "大溪", 誰: "南部守護會抵達", 補充: "" }];

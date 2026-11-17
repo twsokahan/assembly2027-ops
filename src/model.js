@@ -13,16 +13,17 @@ const text = (value) => String(value ?? "").trim();
 const list = (value) => (Array.isArray(value) ? value : []);
 
 const CLOCK = /^(\d{1,2}):(\d{2})(?::\d{2})?$/;
-const RANGE_MARK = /\s*[～~–-]\s*/;
+const RANGE_MARK = /\s*[~〜–-]\s*/;
+const halfWidth = (value) => text(value).normalize("NFKC");
 
 function parseClock(value) {
-  const m = CLOCK.exec(text(value));
+  const m = CLOCK.exec(halfWidth(value));
   if (!m || Number(m[1]) > 23 || Number(m[2]) > 59) return null;
   return `${m[1].padStart(2, "0")}:${m[2]}`;
 }
 
 function parseClockRange(value) {
-  const parts = text(value).split(RANGE_MARK);
+  const parts = halfWidth(value).split(RANGE_MARK);
   if (parts.length > 2) return null;
   const start = parseClock(parts[0]);
   const end = parts.length === 2 ? parseClock(parts[1]) : "";
