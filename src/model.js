@@ -12,7 +12,7 @@ export const isOpen = (status) => !isDone(status) && !isCancelled(status);
 const text = (value) => String(value ?? "").trim();
 const list = (value) => (Array.isArray(value) ? value : []);
 
-const CLOCK = /^(\d{1,2}):(\d{2})$/;
+const CLOCK = /^(\d{1,2}):(\d{2})(?::\d{2})?$/;
 const RANGE_MARK = /\s*[～~–-]\s*/;
 
 function parseClock(value) {
