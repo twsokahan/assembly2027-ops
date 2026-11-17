@@ -12,6 +12,24 @@ export const isOpen = (status) => !isDone(status) && !isCancelled(status);
 const text = (value) => String(value ?? "").trim();
 const list = (value) => (Array.isArray(value) ? value : []);
 
+const CLOCK = /^(\d{1,2}):(\d{2})(?::\d{2})?$/;
+const RANGE_MARK = /\s*[~〜–-]\s*/;
+const halfWidth = (value) => text(value).normalize("NFKC");
+
+function parseClock(value) {
+  const m = CLOCK.exec(halfWidth(value));
+  if (!m || Number(m[1]) > 23 || Number(m[2]) > 59) return null;
+  return `${m[1].padStart(2, "0")}:${m[2]}`;
+}
+
+function parseClockRange(value) {
+  const parts = halfWidth(value).split(RANGE_MARK);
+  if (parts.length > 2) return null;
+  const start = parseClock(parts[0]);
+  const end = parts.length === 2 ? parseClock(parts[1]) : "";
+  return start && end !== null ? { start, end } : null;
+}
+
 function buildLanes(rows) {
   return GROUPS.map((group) => ({
     group,
@@ -191,7 +209,14 @@ export function buildModel(tables = {}) {
       problems.push(`網頁｜兩地行程 的日期「${text(r["日期"])}」看不懂`);
       continue;
     }
-    trackEvents.push({ date, start: text(r["開始"]), end: text(r["結束"]), place: text(r["地點"]), text: text(r["內容"]) });
+    const start = parseClock(r["開始"]);
+    const end = text(r["結束"]) ? parseClock(r["結束"]) : "";
+    if (!start || end === null) {
+      const [label, raw] = start ? ["結束", r["結束"]] : ["開始", r["開始"]];
+      problems.push(`網頁｜兩地行程「${text(r["內容"])}」的${label}「${text(raw)}」看不懂`);
+      continue;
+    }
+    trackEvents.push({ date, start, end, place: text(r["地點"]), text: text(r["內容"]) });
   }
 
   const trackMoves = [];
@@ -201,7 +226,12 @@ export function buildModel(tables = {}) {
       problems.push(`網頁｜兩地移動 的日期「${text(r["日期"])}」看不懂`);
       continue;
     }
-    trackMoves.push({ date, time: text(r["時間"]), from: text(r["從"]), to: text(r["到"]), who: text(r["誰"]), note: text(r["補充"]) });
+    const range = parseClockRange(r["時間"]);
+    if (!range) {
+      problems.push(`網頁｜兩地移動「${text(r["誰"])}」的時間「${text(r["時間"])}」看不懂`);
+      continue;
+    }
+    trackMoves.push({ date, time: range.start, end: range.end, from: text(r["從"]), to: text(r["到"]), who: text(r["誰"]), note: text(r["補充"]) });
   }
 
   return { tasks, meetings, smallGroups, ...calendar, lanes, milestones, spans, deps, trackEvents, trackMoves, problems };

@@ -138,6 +138,53 @@ test("截止點補充用列名找列並補成 milestone", () => {
   assert.deepEqual(m.problems, []);
 });
 
+test("兩地移動的時間可以寫「開始～結束」", () => {
+  const t = clone();
+  t.trackMoves = [
+    { 日期: "2027/2/27", 時間: "17:00～17:30", 從: "外地", 到: "大溪", 誰: "南部守護會抵達", 補充: "" },
+    { 日期: "2027/2/28", 時間: "9:30 ~ 10:00", 從: "外地", 到: "桃園", 誰: "各圈報到", 補充: "" },
+    { 日期: "2027/2/28", 時間: "11:15", 從: "大溪", 到: "桃園", 誰: "春訓學員", 補充: "" },
+    { 日期: "2027/2/28", 時間: "9:00:00", 從: "大溪", 到: "桃園", 誰: "沒參加春訓的南部守護會", 補充: "" },
+  ];
+  const m = buildModel(t);
+  assert.deepEqual(m.trackMoves.map((x) => [x.time, x.end]), [["17:00", "17:30"], ["09:30", "10:00"], ["11:15", ""], ["09:00", ""]]);
+  assert.deepEqual(m.problems, []);
+});
+
+test("兩地時間接受中文輸入法打的全形冒號、數字與波浪號", () => {
+  const t = clone();
+  t.trackMoves = [
+    { 日期: "2027/2/27", 時間: "１７：００～１７：３０", 從: "外地", 到: "大溪", 誰: "南部守護會抵達", 補充: "" },
+    { 日期: "2027/2/28", 時間: "9：30〜10：00", 從: "外地", 到: "桃園", 誰: "各圈報到", 補充: "" },
+  ];
+  t.trackEvents = [{ 日期: "2027/2/27", 開始: "19：00", 結束: "20：30", 地點: "大溪", 內容: "分組交流" }];
+  const m = buildModel(t);
+  assert.deepEqual(m.trackMoves.map((x) => [x.time, x.end]), [["17:00", "17:30"], ["09:30", "10:00"]]);
+  assert.deepEqual(m.trackEvents.map((e) => [e.start, e.end]), [["19:00", "20:30"]]);
+  assert.deepEqual(m.problems, []);
+});
+
+test("兩地移動的時間看不懂時略過並回報", () => {
+  const t = clone();
+  t.trackMoves = [{ 日期: "2027/2/27", 時間: "待定", 從: "外地", 到: "大溪", 誰: "南部守護會抵達", 補充: "" }];
+  const m = buildModel(t);
+  assert.equal(m.trackMoves.length, 0);
+  assert.ok(m.problems.some((p) => p.includes("網頁｜兩地移動") && p.includes("待定")));
+});
+
+test("兩地行程的開始或結束看不懂時略過並回報", () => {
+  const t = clone();
+  t.trackEvents = [
+    { 日期: "2027/2/27", 開始: "", 結束: "", 地點: "大溪", 內容: "宵夜" },
+    { 日期: "2027/2/27", 開始: "19:00", 結束: "待定", 地點: "大溪", 內容: "分組交流" },
+    { 日期: "2027/2/27", 開始: "9:00", 結束: "", 地點: "桃園", 內容: "集合" },
+  ];
+  const m = buildModel(t);
+  assert.deepEqual(m.trackEvents.map((e) => [e.start, e.end]), [["09:00", ""]]);
+  assert.equal(m.problems.filter((p) => p.includes("網頁｜兩地行程")).length, 2);
+  assert.ok(m.problems.some((p) => p.includes("待定")));
+});
+
 test("缺的 key 不丟錯", () => {
   const m = buildModel({ tasks: [], meetings: [] });
   for (const k of ["tasks", "meetings", "smallGroups", "phases", "weeks", "holidays", "marks", "milestones", "spans", "deps", "trackEvents", "trackMoves", "problems"]) {
