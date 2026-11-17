@@ -8,7 +8,7 @@ const PLACES = ["桃園", "大溪"];
 const PLACE_COLORS = { 桃園: "#2a78d6", 大溪: "#1baf7a" };
 const PLACE_TITLES = { 桃園: "桃園會館", 大溪: "大溪會館" };
 const PLACE_SUBTITLES = { 桃園: "彩排、導覽、總會", 大溪: "大溪交流、住宿、春訓" };
-const FOOTNOTE = "時間以規劃文件為準，春訓時間待春訓節目定。南部遊覽車 2/27 建議提早 1 小時出發（苗栗燈會塞車）。";
+const FOOTNOTE = "時間以這一頁為準，由前導組更新。春訓時間待春訓節目定。南部遊覽車 2/27 建議提早 1 小時出發（苗栗燈會塞車）。";
 const OUTSIDE = "外地";
 const BREAK_MARKS = "；，、：";
 
@@ -241,7 +241,7 @@ export function twoSitesSVG(model, opts = {}) {
         if (cross) crossWide(L, cross, y, body);
       }
       rowY.set(t, y + 18);
-      const end = events.find((e) => e.start === t && e.end)?.end;
+      const end = events.find((e) => e.start === t && e.end)?.end ?? moves.find((m) => m.time === t && m.end)?.end;
       out.push(text(L.timeX, y + (L.stacked ? 20 : 24), t, L.stacked ? 16 : 20, { weight: 800, anchor: "end" }));
       if (end) out.push(text(L.timeX, y + (L.stacked ? 36 : 44), `～${end}`, L.stacked ? 12 : 14, { color: MUTED, weight: 600, anchor: "end" }));
       back.push(`<line x1="${mx}" y1="${y + h}" x2="${W - mx}" y2="${y + h}" stroke="${RULE}" stroke-width="1"/>`);
